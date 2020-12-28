@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>QuizPage.dart</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+.s1 { color: #6a8759;}
+.s2 { color: #cc7832;}
+.s3 { color: #6897bb;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+QuizPage.dart</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">'package:quizappodev/Screens/ResultPage.dart'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">'package:quizappodev/Service/Question.dart'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">'package:quizappodev/Service/QuizManager.dart'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">'package:flutter/material.dart'</span><span class="s2">;</span>
+
+<span class="s2">class </span><span class="s0">QuizPage </span><span class="s2">extends </span><span class="s0">StatefulWidget {</span>
+  <span class="s0">@override</span>
+  <span class="s0">_QuizPageState createState() =&gt; _QuizPageState()</span><span class="s2">;</span>
+<span class="s0">}</span>
+
+<span class="s2">class </span><span class="s0">_QuizPageState </span><span class="s2">extends </span><span class="s0">State&lt;QuizPage&gt; {</span>
+  <span class="s0">QuizManager _manager = QuizManager()</span><span class="s2">;</span>
+  <span class="s0">Future&lt;</span><span class="s2">void</span><span class="s0">&gt; quizloader</span><span class="s2">;</span>
+  <span class="s0">List&lt;Widget&gt; getOptions(Question question) {</span>
+    <span class="s0">List&lt;Widget&gt; optionButtons = []</span><span class="s2">;</span>
+    <span class="s2">for </span><span class="s0">(int i = </span><span class="s3">0</span><span class="s2">; </span><span class="s0">i &lt; question.options.length</span><span class="s2">; </span><span class="s0">i++) {</span>
+      <span class="s0">optionButtons.add(FlatButton(</span>
+        <span class="s0">onPressed: () {</span>
+          <span class="s0">_manager.nextQuestion(_manager.getCurrentQuestion().options[i].score)</span><span class="s2">;</span>
+          <span class="s2">if </span><span class="s0">(_manager.isFinished()) {</span>
+            <span class="s0">Navigator.of(context).push(MaterialPageRoute(</span>
+                <span class="s0">builder: (context) =&gt; ResultPage(</span>
+                  <span class="s0">score: _manager.getTotalScore()</span><span class="s2">,</span>
+                <span class="s0">)))</span><span class="s2">;</span>
+          <span class="s0">}</span>
+          <span class="s0">setState(() {})</span><span class="s2">;</span>
+        <span class="s0">}</span><span class="s2">,</span>
+        <span class="s0">child: Container(</span>
+          <span class="s0">width: double.infinity</span><span class="s2">,</span>
+          <span class="s0">padding: EdgeInsets.all(</span><span class="s3">10</span><span class="s0">)</span><span class="s2">,</span>
+          <span class="s0">decoration: BoxDecoration(</span>
+            <span class="s0">color: Colors.limeAccent</span><span class="s2">,</span>
+            <span class="s0">borderRadius: BorderRadius.circular(</span><span class="s3">10</span><span class="s0">)</span><span class="s2">,</span>
+          <span class="s0">)</span><span class="s2">,</span>
+          <span class="s0">child: Text(</span>
+            <span class="s1">'</span><span class="s0">${_manager.getCurrentQuestion().options[i].text}</span><span class="s1">'</span><span class="s2">,</span>
+            <span class="s0">style: TextStyle(</span>
+              <span class="s0">fontSize: </span><span class="s3">25</span><span class="s2">,</span>
+            <span class="s0">)</span><span class="s2">,</span>
+          <span class="s0">)</span><span class="s2">,</span>
+        <span class="s0">)</span><span class="s2">,</span>
+      <span class="s0">))</span><span class="s2">;</span>
+    <span class="s0">}</span>
+    <span class="s2">return </span><span class="s0">optionButtons</span><span class="s2">;</span>
+  <span class="s0">}</span>
+
+  <span class="s0">@override</span>
+  <span class="s2">void </span><span class="s0">initState() {</span>
+    <span class="s4">// TODO: implement initState</span>
+    <span class="s2">super</span><span class="s0">.initState()</span><span class="s2">;</span>
+    <span class="s0">quizloader = _manager.LoadQuestions(</span><span class="s3">10</span><span class="s0">)</span><span class="s2">;</span>
+  <span class="s0">}</span>
+
+  <span class="s0">@override</span>
+  <span class="s0">Widget build(BuildContext context) {</span>
+    <span class="s2">return </span><span class="s0">Scaffold(</span>
+        <span class="s0">appBar: AppBar(</span>
+          <span class="s0">title: Text(</span>
+              <span class="s1">'Questions </span><span class="s0">${_manager.getCurrentId()}</span><span class="s1">/</span><span class="s0">${_manager.totalQuestionNumber()}</span><span class="s1">'</span><span class="s0">)</span><span class="s2">,</span>
+        <span class="s0">)</span><span class="s2">,</span>
+        <span class="s0">body: FutureBuilder&lt;</span><span class="s2">void</span><span class="s0">&gt;(</span>
+            <span class="s0">future: quizloader</span><span class="s2">,</span>
+            <span class="s0">builder: (BuildContext context</span><span class="s2">, </span><span class="s0">AsyncSnapshot&lt;</span><span class="s2">void</span><span class="s0">&gt; snapshot) {</span>
+              <span class="s2">if </span><span class="s0">(snapshot.connectionState == ConnectionState.done) {</span>
+                <span class="s2">return </span><span class="s0">Container(</span>
+                  <span class="s0">padding: EdgeInsets.all(</span><span class="s3">10</span><span class="s0">)</span><span class="s2">,</span>
+                  <span class="s0">child: Column(</span>
+                    <span class="s0">children: [</span>
+                      <span class="s0">Expanded(</span>
+                        <span class="s0">flex: </span><span class="s3">2</span><span class="s2">,</span>
+                        <span class="s0">child: Container(</span>
+                          <span class="s0">height: </span><span class="s3">30</span><span class="s2">,</span>
+                          <span class="s0">padding: EdgeInsets.symmetric(vertical: </span><span class="s3">30</span><span class="s0">)</span><span class="s2">,</span>
+                          <span class="s0">child: Text(</span>
+                            <span class="s1">'</span><span class="s0">${_manager.getCurrentQuestion().text}</span><span class="s1">'</span><span class="s2">,</span>
+                            <span class="s0">style: TextStyle(</span>
+                              <span class="s0">fontSize: </span><span class="s3">15</span><span class="s2">,</span>
+                            <span class="s0">)</span><span class="s2">,</span>
+                          <span class="s0">)</span><span class="s2">,</span>
+                        <span class="s0">)</span><span class="s2">,</span>
+                      <span class="s0">)</span><span class="s2">,</span>
+                      <span class="s0">Expanded(</span>
+                        <span class="s0">flex: </span><span class="s3">8</span><span class="s2">,</span>
+                        <span class="s0">child: Container(</span>
+                          <span class="s0">padding: EdgeInsets.symmetric(horizontal: </span><span class="s3">20</span><span class="s0">)</span><span class="s2">,</span>
+                          <span class="s0">child: Column(</span>
+                            <span class="s0">crossAxisAlignment: CrossAxisAlignment.stretch</span><span class="s2">,</span>
+                            <span class="s0">mainAxisAlignment: MainAxisAlignment.spaceEvenly</span><span class="s2">,</span>
+                            <span class="s0">children: getOptions(_manager.getCurrentQuestion())</span><span class="s2">,</span>
+                          <span class="s0">)</span><span class="s2">,</span>
+                        <span class="s0">)</span><span class="s2">,</span>
+                      <span class="s0">)</span>
+                    <span class="s0">]</span><span class="s2">,</span>
+                  <span class="s0">)</span><span class="s2">,</span>
+                <span class="s0">)</span><span class="s2">;</span>
+              <span class="s0">} </span><span class="s2">else </span><span class="s0">{</span>
+                <span class="s2">return </span><span class="s0">Center(child: CircularProgressIndicator())</span><span class="s2">;</span>
+              <span class="s0">}</span>
+            <span class="s0">}))</span><span class="s2">;</span>
+  <span class="s0">}</span>
+<span class="s0">}</span>
+</pre>
+</body>
+</html>
